@@ -1,5 +1,5 @@
 # ACFES M23 — Professor Virtual
-## Língua Portuguesa + Matemática
+##  Matemática
 
 App de preparação para o exame ACFES Maiores de 23 Anos da Universidade Aberta.
 Usa Flask + edge-tts (vozes naturais Microsoft) + Anthropic API.
