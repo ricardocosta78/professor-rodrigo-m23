@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ACFES M23 — Professor Rodrigo · Matemática</title>
+<link rel="stylesheet" href="/static/css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- ── TOPBAR ── -->
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="prof-avatar" id="profAvatar">
+      <span>🧮</span>
+      <div class="speaking-dot" id="speakingDot"></div>
+    </div>
+    <div class="prof-info">
+      <div class="prof-name">Professor Rodrigo</div>
+      <div class="prof-sub">ACFES · MAIORES DE 23 ANOS · MATEMÁTICA · UNIVERSIDADE ABERTA</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <nav class="tabs">
+    <button class="tab active" onclick="setTab('aula')">💬 Aula</button>
+    <button class="tab" onclick="setTab('progresso')">📊 Progresso</button>
+    <button class="tab" onclick="setTab('programa')">📋 Programa</button>
+  </nav>
+</header>
+
+<!-- ── BODY ── -->
+<div class="body-wrap">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <!-- Voz -->
+    <div class="side-section-label">VOZ DO PROFESSOR</div>
+    <div class="voice-select-wrap">
+      <select id="voiceSelect" onchange="saveVoice(this.value)">
+        {% for key, v in voices.items() %}
+        <option value="{{ key }}">{{ v.label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="voice-test-row">
+      <button class="btn-small btn-blue" onclick="testVoice()">🔊 Testar voz</button>
+      <button class="btn-small btn-grey" onclick="stopAudio()">⏹ Parar</button>
+    </div>
+
+    <div class="side-divider"></div>
+
+    <!-- Acções Matemática -->
+    <div id="sideMat">
+      <div class="side-section-label">MATEMÁTICA</div>
+      <button class="side-btn" onclick="quickAction('dicas_mat')">💡 Dicas do Exame</button>
+      <button class="side-btn btn-accent-mat" onclick="quickAction('gerar_prova_mat')">📝 Gerar Prova-Modelo</button>
+
+      <div class="side-section-label" style="margin-top:10px">TEMAS</div>
+      <button class="side-btn topic-btn" onclick="quickAction('tema_estatistica')">📊 A. Estatística</button>
+      <button class="side-btn topic-btn" onclick="quickAction('tema_combinatoria')">🎲 B. Combinatória</button>
+      <button class="side-btn topic-btn" onclick="quickAction('tema_funcoes1')">📈 C. Funções (1)</button>
+      <button class="side-btn topic-btn" onclick="quickAction('tema_sucessoes')">🔢 D. Sucessões</button>
+      <button class="side-btn topic-btn" onclick="quickAction('tema_funcoes2')">∂ E. Funções (2)</button>
+
+      <div class="side-divider"></div>
+      <div class="side-section-label">AULAS RÁPIDAS</div>
+      <button class="side-btn lesson-btn" onclick="quickLesson('media_moda_mediana')">Média, Moda e Mediana</button>
+      <button class="side-btn lesson-btn" onclick="quickLesson('frequencias')">Frequências e Gráficos</button>
+      <button class="side-btn lesson-btn" onclick="quickLesson('combinacoes')">Combinações C(n,k)</button>
+      <button class="side-btn lesson-btn" onclick="quickLesson('probabilidade')">Probabilidade Clássica</button>
+      <button class="side-btn lesson-btn" onclick="quickLesson('funcao_linear')">Função Linear</button>
+      <button class="side-btn lesson-btn" onclick="quickLesson('funcao_quadratica')">Função Quadrática</button>
+      <button class="side-btn lesson-btn" onclick="quickLesson('logaritmos')">Função Logarítmica</button>
+      <button class="side-btn lesson-btn" onclick="quickLesson('derivadas')">Derivadas — Regras</button>
+      <button class="side-btn lesson-btn" onclick="quickLesson('limites_sucessoes')">Limites de Sucessões</button>
+
+      <div class="side-divider"></div>
+      <div class="side-section-label">CORRIGIR RESOLUÇÃO</div>
+      <label class="upload-btn" for="fileUploadMat">📤 Carregar ficheiro</label>
+      <input type="file" id="fileUploadMat" accept=".txt,.pdf,.png,.jpg" onchange="handleFileUpload(this)" style="display:none">
+      <div id="uploadedNameMat" class="uploaded-badge" style="display:none"></div>
+      <button class="side-btn btn-accent-green" id="btnCorrigirMat" onclick="submitCorrection()" disabled>🔍 Enviar para Correção</button>
+    </div>
+
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <!-- TAB: AULA -->
+    <div id="tabAula" class="tab-pane active">
+      <div class="messages" id="messages"></div>
+
+      <audio id="audioPlayer" style="display:none"></audio>
+
+      <!-- Input -->
+      <div class="input-wrap">
+        <div class="upload-preview" id="uploadPreview" style="display:none">
+          <span id="uploadPreviewName"></span>
+          <button onclick="clearUpload()" class="clear-btn">✕</button>
+        </div>
+        <div class="input-row">
+          <textarea id="userInput" placeholder="Escreve aqui a tua resposta, pergunta, ou resolução para corrigir… (Ctrl+Enter para enviar)"
+                    onkeydown="handleKey(event)"></textarea>
+          <div class="input-actions">
+            <button class="btn-send" id="btnSend" onclick="sendMessage()">➤</button>
+          </div>
+        </div>
+        <div class="input-hint">Ctrl+Enter para enviar · A voz lê automaticamente as respostas do professor</div>
+      </div>
+    </div>
+
+    <!-- TAB: PROGRESSO -->
+    <div id="tabProgresso" class="tab-pane" style="display:none">
+      <div class="tab-inner">
+        <h2 class="tab-title">📊 Progresso</h2>
+        <div id="progressoContent">
+          <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <div>Ainda não tens sessões corrigidas.<br>
+              <small>Resolve exercícios → carrega a resolução → recebe nota.</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: PROGRAMA -->
+    <div id="tabPrograma" class="tab-pane" style="display:none">
+      <div class="tab-inner" id="programaContent">
+        <!-- Preenchido por JS -->
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="/static/js/app.js"></script>
+</body>
+</html>

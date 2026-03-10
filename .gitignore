@@ -2,3 +2,14 @@ node_modules
 dist
 .env
 .claude
+__pycache__/
+*.pyc
+static/audio/
+acfes_m23.zip
+acfes_m23/
+src/
+index.html
+vite.config.js
+package.json
+package-lock.json
+professora-leonor-m23.jsx
