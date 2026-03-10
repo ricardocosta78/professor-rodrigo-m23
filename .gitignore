@@ -8,7 +8,7 @@ static/audio/
 acfes_m23.zip
 acfes_m23/
 src/
-index.html
+/index.html
 vite.config.js
 package.json
 package-lock.json
